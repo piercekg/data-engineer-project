@@ -6,7 +6,7 @@ CREATE DATABASE movies;
 DROP TABLE IF EXISTS production_companies;
 CREATE TABLE production_companies(
   id integer PRIMARY KEY,
-  name varchar(70)
+  name varchar(150)
 );
 
 DROP TABLE IF EXISTS genres;
@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS movies;
 CREATE TABLE movies(
   id integer PRIMARY KEY,
   budget integer,
-  revenue integer,
+  revenue bigint,
   popularity real,
   release_date date
 );
