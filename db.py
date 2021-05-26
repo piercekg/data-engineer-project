@@ -78,4 +78,6 @@ async def get_budget_by_company(company_id):
   SQL = "SELECT SUM(m.budget) FROM movies m, production_companies_movies p where m.id = p.movie_id and p.production_company_id = 559;"
 
 async def get_revenue_by_genre():
-  SQL = "SELECT SUM(m.revenue) FROM movies m, movies_genres j, genres g WHERE m.id = j.movie_id AND j.genre_id = g.id ORDER BY SUM(m.revenue) DESC;"
+  SQL = "SELECT g.name, DATE_PART('year', m.release_date), SUM(m.revenue) FROM movies m, movies_genres j, genres g WHERE m.id = j.movie_id AND j.genre_id = g.id GROUP BY g.name, DATE_PART('year', m.release_date) ORDER BY DATE_PART('year', m.release_date) DESC, SUM(m.revenue) DESC;"
+  result = await query(SQL)
+  return result
