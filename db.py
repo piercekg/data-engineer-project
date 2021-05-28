@@ -4,7 +4,7 @@ import asyncio
 from config import config
 
 # Connect to your postgres DB
-#conn = psycopg2.connect("dbname=movies user=kevin")
+#conn = psycopg2.connect("dbname= user=")
 conn = psycopg2.connect(
   host = config['host'],
   database = config['database'],
