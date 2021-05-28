@@ -17,10 +17,10 @@ cur = conn.cursor()
 
 # Execute a query
 #cur.execute("SELECT * FROM movies")
-
 # Retrieve query results
 #records = cur.fetchall()
 #print(records)
+
 # INSERT function
 async def insert_query(sql, data):
   cur.execute(sql, data)
