@@ -2,7 +2,6 @@ DROP DATABASE IF EXISTS movies;
 CREATE DATABASE movies;
 \c movies;
 
-/*budget,genres,id,imdb_id,original_title,popularity,production_companies,release_date,revenue,title,vote_average,vote_count*/
 DROP TABLE IF EXISTS production_companies;
 CREATE TABLE production_companies(
   id integer PRIMARY KEY,
@@ -18,6 +17,7 @@ CREATE TABLE genres(
 DROP TABLE IF EXISTS movies;
 CREATE TABLE movies(
   id integer PRIMARY KEY,
+  title varchar(150),
   budget integer,
   revenue bigint,
   popularity real,
@@ -39,3 +39,5 @@ CREATE TABLE movies_genres(
   FOREIGN KEY (movie_id) REFERENCES movies(id),
   FOREIGN KEY (genre_id) REFERENCES genres(id)
 );
+
+/*budget,genres,id,imdb_id,original_title,popularity,production_companies,release_date,revenue,title,vote_average,vote_count*/
