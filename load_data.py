@@ -5,15 +5,35 @@ import db
 from datetime import datetime
 from pygrok import Grok
 import re
+from zipfile import ZipFile
+import wget
+from s3urls import parse_url
+import boto3
+
+def download_data(uri):
+  file = uri.split('/')
+  file = file[len(file) - 1]
+  data = wget.download(uri, './data/' + file)
+  return data
+#download_data('https://s3-us-west-2.amazonaws.com/com.guild.us-west-2.public-data/project-data/the-movies-dataset.zip')
+
+def extract(path, file):
+  with ZipFile(path, 'r') as myzip:
+    data = myzip.extract(file, './data')
+    return ('./' + data)
+extract('./data/the-movies-dataset.zip', 'movies_metadata.csv')
 
 def pattern_match(value, pattern):
   grok = Grok(pattern)
   result = grok.match(value)
   return result
 
-async def load_data(path):
+async def load_data(uri, file_name):
   errlog = open("err_log.txt", "w")
   errlog.write('Start: ' + str(datetime.now()) + '\n')
+
+  compressed = download_data(uri)
+  path = extract(compressed, file_name)
 
   with open(path, newline='') as movie_data:
     reader = csv.DictReader(movie_data)
@@ -39,22 +59,32 @@ async def load_data(path):
       else:
         movie = {"id": movie_id['id'], "title": title.group(), "budget": budget['budget'], "revenue": revenue['revenue'], "popularity": popularity['popularity'], "release_date": release_date}
         x = await db.insert_movie(movie)
+        #print(movie)
 
       movie_genres = ['Animation', 'Comedy', 'Family' ,'Adventure' ,'Fantasy' ,'Romance' ,'Drama', 'Action', 'Crime', 'Thriller', 'Horror', 'History', 'Science', 'Fiction Mystery', 'War', 'Foreign', 'Music', 'Documentary', 'Western', 'TV Movie']
-      genres = ast.literal_eval(row['genres'])
+      genres = (row['genres'])
+      if 'GATORADE' in genres:
+        errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
+      else:
+        genres = ast.literal_eval(genres)
       if genres:
         for genre in genres:
-          if genre['name'] in movie_genres:
-            y = await db.insert_genre(genre)
-            z = await db.insert_movie_genre(movie, genre)
-          else:
+          if type(genre) == str:
             errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
+          else:
+            if genre['name'] in movie_genres:
+              #print(genre)
+              y = await db.insert_genre(genre)
+              z = await db.insert_movie_genre(movie, genre)
+            else:
+              errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
       elif genres is None:
         errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
 
       production_companies = ast.literal_eval(str(row['production_companies']))
       if production_companies:
         for production_company in production_companies:
+          #print(production_company)
           a = await db.insert_production_company(production_company)
           b = await db.insert_production_company_movie(production_company, movie)
       elif production_companies is None:
@@ -62,8 +92,16 @@ async def load_data(path):
 
   errlog.write('End: ' + str(datetime.now()))
   errlog.close()
-asyncio.run(load_data('./the-movies-dataset/movies_metadata.csv'))
+#asyncio.run(load_data('./data/movies_metadata.csv'))
+#asyncio.run(load_data('https://s3-us-west-2.amazonaws.com/com.guild.us-west-2.public-data/project-data/the-movies-dataset.zip', 'movies_metadata.csv'))
 
+"""
+def download_data(s3endpoint):
+  s3info = parse_url(s3endpoint)
+  s3 = boto3.client('s3')
+  s3.download_file(s3info['bucket'], s3info['key'], 'the-movies-dataset.zip')
+download_data('s3://com.guild.us-west-2.public-data/project-data/the-movies-dataset.zip')
+"""
 """
 def load_data(path):
 

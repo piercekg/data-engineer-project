@@ -3,3 +3,4 @@ the-movies-dataset/
 output/
 config.py
 err_log.txt
+data/
