@@ -1,18 +1,20 @@
 import asyncio
 import db
 
+# Function for generating outputs to all 9 questions
 async def generate_all_outputs():
-  a = await db.select_budget_by_genre_by_year()
-  b = await db.select_revenue_by_genre_by_year()
-  c = await db.select_profit_by_genre_by_year()
-  d = await db.select_popularity_by_genre_by_year()
-  e = await db.select_budget_by_company_by_year()
-  f = await db.select_revenue_by_company_by_year()
-  g = await db.select_profit_by_company_by_year()
-  h = await db.select_popularity_by_company_by_year()
-  i = await db.select_releases_by_company_by_genre_by_year()
+  await db.select_budget_by_genre_by_year()
+  await db.select_revenue_by_genre_by_year()
+  await db.select_profit_by_genre_by_year()
+  await db.select_popularity_by_genre_by_year()
+  await db.select_budget_by_company_by_year()
+  await db.select_revenue_by_company_by_year()
+  await db.select_profit_by_company_by_year()
+  await db.select_popularity_by_company_by_year()
+  await db.select_releases_by_company_by_genre_by_year()
 asyncio.run(generate_all_outputs())
 
+# Functions to generate output for individual questions
 async def get_budget_by_genre_by_year():
   results = await db.select_budget_by_genre_by_year()
   return results

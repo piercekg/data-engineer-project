@@ -3,8 +3,7 @@ from datetime import datetime
 import asyncio
 from config import config
 
-# Connect to your postgres DB
-#conn = psycopg2.connect("dbname= user=")
+# Connect to the postgres DB
 conn = psycopg2.connect(
   host = config['host'],
   database = config['database'],
@@ -15,18 +14,12 @@ conn = psycopg2.connect(
 # Open a cursor to perform database operations
 cur = conn.cursor()
 
-# Execute a query
-#cur.execute("SELECT * FROM movies")
-# Retrieve query results
-#records = cur.fetchall()
-#print(records)
-
-# INSERT function
+# INSERT function - takes SQL query and data to be inserted, and executes query
 async def insert_query(sql, data):
   cur.execute(sql, data)
   conn.commit()
 
-# INSERT queries
+# INSERT queries for loading data
 async def insert_movie(movie):
   SQL = "INSERT INTO movies (id, title, budget, revenue, popularity, release_date) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title RETURNING *;"
   data = [int(movie['id']), movie['title'], int(movie['budget']), int(movie['revenue']), float(movie['popularity']), movie['release_date']]
@@ -61,7 +54,7 @@ async def insert_production_company_movie(production_company, movie):
   result = await insert_query(SQL, data)
   return result
 
-# SELECT function
+# SELECT function - takes SQL query, path for output .csv file, and fields for header row and writes results to .csv file
 async def select_query(sql, path, header):
   with open('./output/' + path, 'w') as output:
     output.write(header + '\n')
@@ -73,6 +66,7 @@ async def select_query(sql, path, header):
       for record in cur:
         output.write(str(record[0]) + ',' + str(int(record[1])) + ',' + str(float(record[2])) + '\n')
 
+# SELECT Queries
 # Movie Genre Details
 async def select_budget_by_genre_by_year():
   SQL = "SELECT g.name, DATE_PART('year', m.release_date) AS year, SUM(m.budget) AS total_budget FROM movies m, movies_genres j, genres g WHERE m.id = j.movie_id AND j.genre_id = g.id GROUP BY g.name, year ORDER BY year DESC, total_budget DESC;"
@@ -137,8 +131,3 @@ async def select_releases_by_company_by_genre_by_year():
   header = 'production_company,genre,year,releases'
   result = await select_query(SQL, path, header)
   return result
-
-"""
-async def get_budget_by_company(company_id):
-  SQL = "SELECT SUM(m.budget) FROM movies m, production_companies_movies p where m.id = p.movie_id and p.production_company_id = 559;"
-"""

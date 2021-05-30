@@ -39,5 +39,3 @@ CREATE TABLE movies_genres(
   FOREIGN KEY (movie_id) REFERENCES movies(id),
   FOREIGN KEY (genre_id) REFERENCES genres(id)
 );
-
-/*budget,genres,id,imdb_id,original_title,popularity,production_companies,release_date,revenue,title,vote_average,vote_count*/
