@@ -1,4 +1,4 @@
-## Getting Started
+### Getting Started
 **Requirements**
 Python v3.8.5
 PostgreSQL v13.3
