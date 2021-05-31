@@ -1,22 +1,14 @@
 ### Getting Started
 **Requirements**
-
-Python v3.8.5
-
-PostgreSQL v13.3
+* Python v3.8.5
+* PostgreSQL v13.3
 
 **Dependencies**
-
-psycopg2 v2.8.6
-
+* psycopg2 v2.8.6
 `$ pip install psycopg2`
-
-pygrok v1.0.0
-
+* pygrok v1.0.0
 `$ pip install pygrok`
-
-wget v3.2
-
+* wget v3.2
 `$ pip install wget`
 
 **How to Run**
