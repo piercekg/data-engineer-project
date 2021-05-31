@@ -65,19 +65,20 @@ async def load_data(uri, file_name):
         await db.insert_movie(movie)
 
       # For each movie, access the genres associated with that movie by field name, and validate the genres data using regular expressions
-      genres = re.search(r"(\[)(({'id': )[0-9]+(, 'name': )[ 'a-zA-Z]+(}, ))+({'id': )[0-9]+(, 'name': )[' a-zA-Z]+(}\])", str(row['genres']))
+      genres = re.search(r"^(\[)(({'id': )[0-9]+(, 'name': )[ 'a-zA-Z]+(}, ))+({'id': )[0-9]+(, 'name': )[' a-zA-Z]+(}\])$", str(row['genres']))
       # If the genre data passes the validation step, insert each genre into the movies database, and insert a link between each genre and the current movie
       if genres:
         genres = ast.literal_eval(genres.group())
         for genre in genres:
           await db.insert_genre(genre)
           await db.insert_movie_genre(movie, genre)
+
       # If the genre data doesn't pass the validation step, write the current row to the error log
       else:
         errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
 
       # For each movie, access the production companies associated with the current movie by field name, and validate the production companies data using regular expressions
-      production_companies = re.search(r"(\[)(({'name': ).+(, 'id': )[0-9]+(})(, )?)*(({'name': ).+(, 'id': )[0-9]+(}))?(\])", str(row['production_companies']))
+      production_companies = re.search(r"^(\[)(({'name': ).+(, 'id': )[0-9]+(})(, )?)*(({'name': ).+(, 'id': )[0-9]+(}))?(\])$", str(row['production_companies']))
       # If the production companies data passes the validation step, insert each production company into the movies database, and insert a link between each production company and the current movie
       if production_companies:
         if type(production_companies) != list:
@@ -85,6 +86,7 @@ async def load_data(uri, file_name):
         for production_company in production_companies:
           await db.insert_production_company(production_company)
           await db.insert_production_company_movie(production_company, movie)
+
       # if the production companies data doesn't pass the validation step, write the current row to the error log
       else:
         errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
