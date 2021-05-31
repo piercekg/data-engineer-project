@@ -72,7 +72,6 @@ async def load_data(uri, file_name):
         for genre in genres:
           await db.insert_genre(genre)
           await db.insert_movie_genre(movie, genre)
-
       # If the genre data doesn't pass the validation step, write the current row to the error log
       else:
         errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
@@ -86,7 +85,6 @@ async def load_data(uri, file_name):
         for production_company in production_companies:
           await db.insert_production_company(production_company)
           await db.insert_production_company_movie(production_company, movie)
-
       # if the production companies data doesn't pass the validation step, write the current row to the error log
       else:
         errlog.write(str(datetime.now()) + ' - ' + str(row) + '\n')
@@ -99,6 +97,7 @@ async def load_data(uri, file_name):
 asyncio.run(load_data('https://s3-us-west-2.amazonaws.com/com.guild.us-west-2.public-data/project-data/the-movies-dataset.zip', 'movies_metadata.csv'))
 
 """
+# Attempt at retrieving zipfile from s3 bucket
 def download_data(s3endpoint):
   s3info = parse_url(s3endpoint)
   s3 = boto3.client('s3')
