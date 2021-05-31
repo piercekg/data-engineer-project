@@ -12,6 +12,7 @@ async def generate_all_outputs():
   await db.select_profit_by_company_by_year()
   await db.select_popularity_by_company_by_year()
   await db.select_releases_by_company_by_genre_by_year()
+# Run generate_all_outputs script
 asyncio.run(generate_all_outputs())
 
 # Functions to generate output for individual questions

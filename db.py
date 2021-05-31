@@ -21,6 +21,7 @@ async def insert_query(sql, data):
 
 # INSERT queries for loading data
 async def insert_movie(movie):
+  # Insert the data for the current movie into the database; in the case of duplicate entries, return the data and write it to an error log for examination later
   SQL = "INSERT INTO movies (id, title, budget, revenue, popularity, release_date) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title RETURNING *;"
   data = [int(movie['id']), movie['title'], int(movie['budget']), int(movie['revenue']), float(movie['popularity']), movie['release_date']]
   result = await insert_query(SQL, data)
@@ -31,24 +32,28 @@ async def insert_movie(movie):
   return result
 
 async def insert_genre(genre):
+  # Insert the current genre into the database; if it already exists, skip it
   SQL = "INSERT INTO genres (id, name) VALUES (%s, %s) ON CONFLICT (id) DO NOTHING;"
   data = [int(genre['id']), genre['name']]
   result = await insert_query(SQL, data)
   return result
 
 async def insert_production_company(production_company):
+  # Insert the current production company into the database; if it already exists, skip it
   SQL = "INSERT INTO production_companies (id, name) VALUES (%s, %s) ON CONFLICT (id) DO NOTHING;"
   data = [int(production_company['id']), production_company['name']]
   result = await insert_query(SQL, data)
   return result
 
 async def insert_movie_genre(movie, genre):
+  # Insert link between the current movie and the current genre
   SQL = "INSERT INTO movies_genres (movie_id, genre_id) VALUES (%s, %s);"
   data = [int(movie['id']), int(genre['id'])]
   result = await insert_query(SQL, data)
   return result
 
 async def insert_production_company_movie(production_company, movie):
+  # Insert link between the current movie and the current production company
   SQL = "INSERT INTO production_companies_movies (production_company_id, movie_id) VALUES (%s, %s);"
   data = [int(production_company['id']), int(movie['id'])]
   result = await insert_query(SQL, data)
