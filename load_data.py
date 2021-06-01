@@ -65,7 +65,7 @@ async def load_data(uri, file_name):
         await db.insert_movie(movie)
 
       # For each movie, access the genres associated with that movie by field name, and validate the genres data using regular expressions
-      genres = re.search(r"^(\[)(({'id': )[0-9]+(, 'name': )[ 'a-zA-Z]+(}, ))+({'id': )[0-9]+(, 'name': )[' a-zA-Z]+(}\])$", str(row['genres']))
+      genres = re.search(r"^(\[)(({'id': )[0-9]+(, 'name': )[ 'a-zA-Z]+(})(, )?)*(({'id': )[0-9]+(, 'name': )[' a-zA-Z]+(}))?(\])$", str(row['genres']))
       # If the genre data passes the validation step, insert each genre into the movies database, and insert a link between each genre and the current movie
       if genres:
         genres = ast.literal_eval(genres.group())
